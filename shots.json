@@ -1,5 +1,26 @@
 [
-  { "name": "1-cover.jpg", "query": "?shot=cover&photo=pier&caption=Sunset%20Heist", "w": 1080, "h": 1080 },
-  { "name": "2-editor.jpg", "query": "?shot=editor&photo=boulevard&caption=Boulevard%20Queen", "w": 1280, "h": 720 },
-  { "name": "3-cover.jpg", "query": "?shot=cover&photo=boulevard&caption=Boulevard%20Queen", "w": 1080, "h": 1080 }
+  {
+    "name": "1-cover-landscape.jpg",
+    "query": "?shot=1&size=1920x1080&template=triptych&grade=vice-sunset&caption=NEON%20NIGHTS&tagline=The%20city%20is%20yours&kicker=COMING%20SOON&font=anton&photos=convertible,driver,suit&select=1",
+    "w": 1920,
+    "h": 1080
+  },
+  {
+    "name": "2-editor.jpg",
+    "query": "?shot=1&size=1080x1350&template=top-strip&grade=neon-miami&caption=SUNSET%20RUN&tagline=Nothing%20stays%20hidden&kicker=ONLY%20IN%20THEATRES&font=bebas&photos=convertible,gasstation,club-dancer,suit&select=0",
+    "w": 1440,
+    "h": 900
+  },
+  {
+    "name": "3-cover-portrait.jpg",
+    "query": "?shot=1&size=1080x1350&template=asymmetric-mosaic&grade=dusk-teal-orange&caption=SUNSET%20HEIST&tagline=After%20dark%2C%20anything%20goes&kicker=SUMMER%20OF%20CHANCE&font=bowlby&photos=boulevard,skater,beach-couple,gasstation,driver",
+    "w": 1080,
+    "h": 1350
+  },
+  {
+    "name": "4-cover-square.jpg",
+    "query": "?shot=1&size=1080x1080&template=grid-slant&grade=neon-miami&caption=LAST%20RIDE&tagline=Dance%20until%20sunrise&kicker=FRIDAY%20NIGHT&font=archivo&photos=club-dancer,convertible,suit,gasstation",
+    "w": 1080,
+    "h": 1080
+  }
 ]

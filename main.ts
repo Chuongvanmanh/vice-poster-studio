@@ -1,23 +1,32 @@
-// A working gta6-cover-art-01 entry (Node 22, standard library only): the app is this directory's app/ folder, plain
-// static files a desktop browser loads offline (app/index.html and its ES modules, no library and no network
-// request), and the program hands it in. It copies app/ and screenshots/ from beside this file to /output and writes
-// /output/dossier.json, the summary the judge reads, with the vendored make.fun library. Only the plumbing, not the
-// cover art the bounty asks for: Cover Snap, a plain one-photo square cover with a sunset tint and a bold caption,
-// exported as a 1080 x 1080 PNG. Its two sample photos (app/samples/) were made for make.fun with an image model and
-// are free to use. Build your own GTA-style cover maker in its place, put your 3 or 4 PNG or JPEG screenshots in
-// screenshots/ (the first by name is the cover) and run it.
+// Vice Poster Studio, an original offline gta6-cover-art-01 entry (Node 22, standard library only).
+// app/ is a folder of plain static files a desktop browser loads offline: ES modules, canvas 2D, local fonts
+// and local sample photos, with no library, CDN or network request. It turns photos and a caption into a
+// multi-panel Vice City sunset poster with cinematic grades and layered lettering, exported as a PNG at
+// 1080x1080, 1080x1350 or 1920x1080. This program sanity-checks that folder, copies app/ and screenshots/
+// from beside this file to /output, and writes /output/dossier.json with the vendored make.fun library.
+// The eight sample photos in app/samples/ were made for make.fun with an image model and are free to use.
 //
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-app.ts';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+
+for (const required of ['app/index.html', 'app/src/main.js']) {
+  const path = join(here, required);
+  if (!existsSync(path) || !statSync(path).isFile()) throw new Error(`Vice Poster Studio: missing required file ${required}`);
+}
+const shotDir = join(here, 'screenshots');
+const shotFiles = existsSync(shotDir)
+  ? readdirSync(shotDir, { withFileTypes: true }).filter((entry) => entry.isFile())
+  : [];
+if (shotFiles.length < 3) throw new Error(`Vice Poster Studio: screenshots/ needs at least 3 files, found ${shotFiles.length}`);
 
 mkdirSync(out, { recursive: true });
 cpSync(join(here, 'app'), join(out, 'app'), { recursive: true });

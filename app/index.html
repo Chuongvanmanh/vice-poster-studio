@@ -3,21 +3,140 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cover Snap</title>
+<title>Vice Poster Studio — GTA-style cover art</title>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<main class="app">
-  <section class="controls">
-    <h1>Cover Snap</h1>
-    <p>A photo and a caption, made into a square cover.</p>
-    <label>Photo <input id="photo" type="file" accept="image/*"></label>
-    <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-    <button id="export" type="button">Export PNG 1080 x 1080</button>
-    <p id="status" role="status"></p>
-  </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
-</main>
+<div class="app-shell">
+  <aside class="sidebar" aria-label="Poster editor">
+    <header class="brand">
+      <div class="brand-mark">VP</div>
+      <div>
+        <h1>VICE POSTER <span>STUDIO</span></h1>
+        <p>Offline cover-art machine</p>
+      </div>
+    </header>
+
+    <div class="sidebar-scroll">
+      <section class="step-card" aria-labelledby="step1-title">
+        <div class="step-head">
+          <span class="step-num">1</span>
+          <div><h2 id="step1-title">Add photos</h2><p>Portraits, landscapes, anything.</p></div>
+        </div>
+        <label class="primary-file" for="photo-input" title="Choose one or many images from your device">
+          <span class="plus">+</span> Choose photos
+        </label>
+        <input id="photo-input" type="file" accept="image/*" multiple hidden>
+        <div class="button-row">
+          <button id="sample-btn" class="soft" type="button" title="Load eight included sample photos">Try sample photos</button>
+          <button id="shuffle-btn" class="soft" type="button" title="Aspect-aware seeded reshuffle (S)">Shuffle</button>
+        </div>
+        <div id="drop-zone" class="drop-zone" title="Drop image files here, or paste from the clipboard">
+          <strong>Drop photos here</strong><span>or press Ctrl+V</span>
+        </div>
+        <label class="check-row" title="Every panel uses the same photo with a different crop">
+          <input id="one-photo" type="checkbox"> <span>Use one photo in all panels</span>
+        </label>
+        <div class="tray-head"><span>Photo tray</span><span id="photo-count">0 photos</span></div>
+        <div id="photo-tray" class="photo-tray"></div>
+      </section>
+
+      <section class="step-card" aria-labelledby="step2-title">
+        <div class="step-head">
+          <span class="step-num">2</span>
+          <div><h2 id="step2-title">Write the cover</h2><p>Every word is editable.</p></div>
+        </div>
+
+        <label class="field">Caption <small>Use Enter for a new line</small>
+          <textarea id="caption-input" rows="2" maxlength="60">VICE CITY&#10;NIGHTS</textarea>
+        </label>
+        <div class="field-grid">
+          <label class="field">Script tagline
+            <input id="tagline-input" type="text" maxlength="40" value="The city is yours">
+          </label>
+          <label class="field">Kicker bar
+            <input id="kicker-input" type="text" maxlength="26" value="COMING SOON">
+          </label>
+        </div>
+        <label class="field">Corner badge / date
+          <input id="badge-input" type="text" maxlength="20" value="EST. 1986">
+        </label>
+
+        <div class="field-grid">
+          <label class="field">Lettering font
+            <select id="font-select"></select>
+          </label>
+          <label class="field">Colour grade
+            <select id="grade-select"></select>
+          </label>
+        </div>
+        <div id="grade-swatches" class="grade-swatches" aria-label="Colour grade presets"></div>
+
+        <div class="field-grid">
+          <label class="field">Text position
+            <select id="position-select"></select>
+          </label>
+          <label class="field">Layout
+            <select id="layout-select"></select>
+          </label>
+        </div>
+        <div id="layout-thumbs" class="layout-thumbs" aria-label="Layout presets"></div>
+
+        <div class="slider-row">
+          <label for="font-size">Size <output id="font-size-value">100</output></label>
+          <input id="font-size" type="range" min="65" max="125" step="1" value="100">
+        </div>
+        <div class="slider-row">
+          <label for="tracking">Tracking <output id="tracking-value">2</output></label>
+          <input id="tracking" type="range" min="-3" max="12" step="1" value="2">
+        </div>
+        <div class="slider-row">
+          <label for="panel-zoom">Panel zoom <output id="panel-zoom-value">1.00×</output></label>
+          <input id="panel-zoom" type="range" min="1" max="3.2" step="0.01" value="1">
+        </div>
+
+        <div class="button-row wrap">
+          <button id="panel-rotate" class="soft" type="button" title="Rotate selected panel (R)">↻ Rotate</button>
+          <button id="panel-flip-x" class="soft" type="button" title="Flip selected panel horizontally (F)">⇋ Flip X</button>
+          <button id="panel-flip-y" class="soft" type="button" title="Flip selected panel vertically">↕ Flip Y</button>
+          <button id="replace-photo-btn" class="soft" type="button" title="Replace the selected panel's photo">Replace</button>
+        </div>
+        <div class="button-row">
+          <button id="randomise-btn" class="accent-button" type="button" title="Randomise grade, font, layout and position (Space)">Randomise style ✦</button>
+          <label class="check-row compact" title="Show a thin panel border">
+            <input id="panel-border" type="checkbox" checked> <span>Border</span>
+          </label>
+        </div>
+        <p class="help">Click a panel to select it. Drag to pan, scroll to zoom. Drag a tray thumbnail onto a panel.</p>
+      </section>
+    </div>
+
+    <section class="export-card" aria-labelledby="step3-title">
+      <div class="step-head compact-head">
+        <span class="step-num">3</span>
+        <div><h2 id="step3-title">Export PNG</h2><p>Exact poster resolution.</p></div>
+      </div>
+      <div class="size-toggles" role="group" aria-label="Poster size">
+        <button type="button" data-size="1080x1080"><strong>1:1</strong><span>1080 × 1080</span></button>
+        <button type="button" data-size="1080x1350"><strong>4:5</strong><span>1080 × 1350</span></button>
+        <button type="button" data-size="1920x1080"><strong>16:9</strong><span>1920 × 1080</span></button>
+      </div>
+      <button id="export-btn" type="button">Export PNG <span id="export-size">1920 × 1080</span></button>
+      <p id="status" role="status">Ready.</p>
+    </section>
+  </aside>
+
+  <main class="stage">
+    <div class="stage-top">
+      <div class="stage-title"><span class="live-dot"></span> LIVE PREVIEW <small id="preview-template">Tall Triptych · Vice Sunset</small></div>
+      <div class="stage-keys">R rotate · F flip · S shuffle · Space randomise · Del clear panel</div>
+    </div>
+    <div id="canvas-wrap" class="canvas-wrap">
+      <canvas id="preview" width="960" height="540" aria-label="Poster preview"></canvas>
+    </div>
+    <div class="stage-bottom"><span id="preview-size">1920 × 1080</span><span>All artwork generated offline in your browser.</span></div>
+  </main>
+</div>
 <script type="module" src="./src/main.js"></script>
 </body>
 </html>
